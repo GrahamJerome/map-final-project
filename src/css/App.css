@@ -1,0 +1,41 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Helvetica', 'Arial', sans-serif !important;
+}
+
+body {
+  height: 100%;
+  font-size: 14px;
+}
+
+article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, #app
+{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+div[role="tooltip"] {
+  display: none;
+}
+
+aside#locations {
+  width: 30%;
+  background-color: black;
+}
+
+#locations input.filter {
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-bottom: 4px solid gray;
+  font-size: 1em;
+  color: gray;
+}
+
+section#map {
+  width: 70%;
+  background-color: gray;
+}
+
+
+
