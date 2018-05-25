@@ -2,15 +2,18 @@ import React, { Component } from 'react';
 import './css/App.css';
 
 const LocationLinks = (props) => (
-	<div className="locations-holder">
-		<ul>
-		{
-			props.locations.map((location, i) => (
-				<li key={i}>{location.title}</li>
-			))
-		}
-		</ul>
-	</div>
+	<ul className="locations-holder">
+	{
+		props.locations.map((location, i) => (
+			<li key={i}>
+				{/* you'll need to pass in the lat long here, so it'll need to be a component */}
+				<a href="#">
+					{location.title}
+				</a>
+			</li>
+		))
+	}
+	</ul>
 )
 
 export default LocationLinks;

@@ -3,8 +3,9 @@
   font-family: 'Helvetica', 'Arial', sans-serif !important;
 }
 
+html, body, #root, #app { height: 100%; margin: 0; padding: 0; }
+
 body {
-  height: 100%;
   font-size: 14px;
 }
 
@@ -18,8 +19,13 @@ div[role="tooltip"] {
   display: none;
 }
 
+#app {
+  flex-direction: row;
+}
+
 aside#locations {
   width: 30%;
+  flex-direction: column;
   background-color: black;
 }
 
@@ -30,6 +36,19 @@ aside#locations {
   border-bottom: 4px solid gray;
   font-size: 1em;
   color: gray;
+}
+
+ul.locations-holder {
+  padding-left: 0;
+}
+
+ul.locations-holder li {
+  padding: 6px 8px;
+}
+
+ul.locations-holder li a:link, ul.locations-holder li a:visited{
+  color: white;
+  text-decoration: none;
 }
 
 section#map {
