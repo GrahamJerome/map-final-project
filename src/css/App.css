@@ -3,7 +3,7 @@
   font-family: 'Helvetica', 'Arial', sans-serif !important;
 }
 
-html, body, #root, #app { height: 100%; margin: 0; padding: 0; }
+html, body, #root, #root > div,  #app { height: 100%; margin: 0; padding: 0; }
 
 body {
   font-size: 14px;
@@ -46,9 +46,10 @@ ul.locations-holder li {
   padding: 6px 8px;
 }
 
-ul.locations-holder li a:link, ul.locations-holder li a:visited{
+ul.locations-holder li {
   color: white;
   text-decoration: none;
+  cursor: pointer;
 }
 
 section#map {
