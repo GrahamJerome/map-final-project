@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { GoogleApiWrapper } from 'google-maps-react';
 
 import LocationsList from './LocationsList';
+import fsLogo from './images/foursquare-logo.jpg';
 import './css/App.css';
 
 class App extends Component {
@@ -93,9 +94,16 @@ class App extends Component {
 
 	// render the marker info window
 	populateInfoWindow = (marker) => {
+
+		const { google } = this.props;
+
     // check to make sure the mapInfoWindow is not already opened on this marker.
     if (this.mapInfoWindow.marker !== marker) {
+
+    	this.resetMarkers();
+
 	    this.mapInfoWindow.marker = marker;
+	    this.mapInfoWindow.marker.setAnimation(google.maps.Animation.BOUNCE);
 
 	    // populate the marker content
 	    let markerContent;
@@ -110,11 +118,14 @@ class App extends Component {
 	    			`<p>${marker.fSquareInfo.location.formattedAddress[0]}</p>` +
 	    			`<p>${marker.fSquareInfo.location.formattedAddress[1]}</p>` +
 	    		`</div>` +
+	    		`<img src=${fsLogo} alt="four square logo" />` +
 	    	`</div>`;
 	    } else {
 	    	markerContent =
 	    	`<div className="marker">` +
 	    		`<h2>${marker.title}</h2>` +
+	    		`<p>Foursquare API unavailable</p>` +
+	    		`<img src=${fsLogo} alt="four square logo" />` +
 	    	`</div>`;
 	    }
 	    this.mapInfoWindow.setContent(markerContent);
@@ -122,9 +133,18 @@ class App extends Component {
 
 	    // make sure the marker property is cleared if the mapInfoWindow is closed.
 	    this.mapInfoWindow.addListener('closeclick', () => {
+	    	this.mapInfoWindow.marker.setAnimation(null);
 	      this.mapInfoWindow.setMarker = null;
 	    });
   	}
+  }
+
+  resetMarkers() {
+  	const { markers } = this.state;
+
+  	markers.forEach((marker) => {
+  		marker.setAnimation(null);
+  	});
   }
 
   // this must be an arrow function to make sure this is App.js scope
@@ -132,6 +152,9 @@ class App extends Component {
   	if (location.show) {
 	  	const { markers } = this.state;
 	  	const marker = markers.filter((marker) => marker.title === location.title);
+
+	  	console.log(marker[0]);
+
 	  	// return the object, not the array.
 	  	this.populateInfoWindow(marker[0]);
   	}

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import escapeRegExp from 'escape-string-regexp'
 import LocationLink from './LocationLink';
 
+
 class LocationsList extends Component {
 
 	state = {
