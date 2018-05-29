@@ -8,27 +8,29 @@ class App extends Component {
 	state = {
 		markers: [],
 		locations: [
-			{ title: "Freshii", position: { lat: 45.353835, lng: -75.931967 } },
-			{ title: "Shawarma House", position: { lat: 45.3578524, lng: -75.9358577 } },
-			{ title: "Willy's Pizza", position: { lat: 45.3541745, lng: -75.9354016 } },
-			{ title: "Starbucks", position: { lat: 45.3582155, lng: -75.9368827 } },
-			{ title: "McDonald's", position: { lat: 45.3587677, lng: -75.9386384 } }
+			{ title: "Freshii", position: { lat: 45.353835, lng: -75.931967 }, show: true },
+			{ title: "Shawarma House", position: { lat: 45.3578524, lng: -75.9358577 }, show: true },
+			{ title: "Willy's Pizza", position: { lat: 45.3541745, lng: -75.9354016 }, show: true },
+			{ title: "Starbucks", position: { lat: 45.3582155, lng: -75.9368827 }, show: true },
+			{ title: "McDonald's", position: { lat: 45.3587677, lng: -75.9386384 }, show: true }
 		],
 		foursquare: require('react-foursquare')({
 		  clientID: '4UXJZBCVXFLJUVGLKEX1VQVMCEFJDKJKYYASDHJEHH0WOK4I',
 		  clientSecret: 'BATMM0DKAH2ILJVRPXUWZ2WTSXLOU2V1V1S2P245AQ1DRBJI'
-		}),
-		fsItems: []
+		})
 	}
 
 	componentDidMount() {
-		const { locations, foursquare, fsItems } = this.state;
-		const fsParams = locations.map((location) => {
+		const { locations, foursquare } = this.state;
+		const pingFs = locations.map((location) => {
 			foursquare.venues.getVenues({
 				"ll": `${location.position.lat}, ${location.position.lng}`,
 				"query": location.title
 			}).then(res => {
-					Object.assign(location, res.response.venues[0]);
+					Object.assign(location, res.response.venues[0], { success: true });
+			}).catch(err => {
+				// this can easily be triggered by calling more than 950 times
+				console.log(err);
 			});
 		});
 
@@ -39,13 +41,14 @@ class App extends Component {
 		this.loadMap();
 	}
 
+	// setup and render the map
 	loadMap() {
 		if (!this.props || !this.props.google) return;
 
 		/* initialize the map */
 
 		const { google } = this.props;
-		const { locations, markers, fsItems } = this.state;
+		const { locations, markers } = this.state;
 		const mapNode   = document.getElementById('map');
 		const mapConfig = Object.assign({}, {
 			zoom     : 13,
@@ -60,38 +63,45 @@ class App extends Component {
 		/* setup map markers */
 
 		locations.forEach((location, i) => {
-			// this automatically adds the marker to the map object
-			let marker = new google.maps.Marker({
-				map      : this.map,
-				position : location.position,
-				title    : location.title,
-				animation: google.maps.Animation.DROP,
-			  id: i,
-			  fSquareInfo: location
-			});
+			// console.log(location);
+			if (location.show) {
+				// this automatically adds the marker to the map object
+				let marker = new google.maps.Marker({
+					map      : this.map,
+					position : location.position,
+					title    : location.title,
+					animation: google.maps.Animation.DROP,
+				  id: i,
+				  fSquareInfo: location
+				});
 
-			// create an onclick event to open an infowindow at each marker.
-			marker.addListener('click', () => {
-			  this.populateInfoWindow(marker);
-			});
+				// create an onclick event to open an infowindow at each marker.
+				marker.addListener('click', () => {
+				  this.populateInfoWindow(marker);
+				});
 
-			bounds.extend(location.position);
+				bounds.extend(location.position);
 
-			// push the marker to our array of markers.
-			markers.push(marker);
+				// push the marker to our array of markers.
+				markers.push(marker);
+			}
 		});
 
 		// adjust map view to fit all markers
 		this.map.fitBounds(bounds);
 	}
 
-	populateInfoWindow(marker) {
+	// render the marker info window
+	populateInfoWindow = (marker) => {
     // check to make sure the mapInfoWindow is not already opened on this marker.
     if (this.mapInfoWindow.marker !== marker) {
 	    this.mapInfoWindow.marker = marker;
 
 	    // populate the marker content
-	    this.mapInfoWindow.setContent(
+	    let markerContent;
+
+	    if (marker.fSquareInfo.success) {
+	    	markerContent =
 	    	`<div className="marker">` +
 	    		`<h2><img src="${marker.fSquareInfo.categories[0].icon.prefix+'bg_32'+marker.fSquareInfo.categories[0].icon.suffix}"> ${marker.fSquareInfo.name}</h2>` +
 	    		`<h4>${marker.fSquareInfo.categories[0].name}, <u>${marker.fSquareInfo.hereNow.summary}</u></h4>` +
@@ -100,8 +110,14 @@ class App extends Component {
 	    			`<p>${marker.fSquareInfo.location.formattedAddress[0]}</p>` +
 	    			`<p>${marker.fSquareInfo.location.formattedAddress[1]}</p>` +
 	    		`</div>` +
-	    	`</div>`
-	    );
+	    	`</div>`;
+	    } else {
+	    	markerContent =
+	    	`<div className="marker">` +
+	    		`<h2>${marker.title}</h2>` +
+	    	`</div>`;
+	    }
+	    this.mapInfoWindow.setContent(markerContent);
 	    this.mapInfoWindow.open(this.map, marker);
 
 	    // make sure the marker property is cleared if the mapInfoWindow is closed.
@@ -113,11 +129,21 @@ class App extends Component {
 
   // this must be an arrow function to make sure this is App.js scope
   locationLinkClicked = (location) => {
-  	const { markers } = this.state;
-  	const marker = markers.filter((marker) => marker.title === location.title);
+  	if (location.show) {
+	  	const { markers } = this.state;
+	  	const marker = markers.filter((marker) => marker.title === location.title);
+	  	// return the object, not the array.
+	  	this.populateInfoWindow(marker[0]);
+  	}
+  }
 
-  	// return the object, not the array.
-  	this.populateInfoWindow(marker[0]);
+  // adjust the locations based on filtering
+  filterLocations = (locations) => {
+  	// markers MUST be reset upon every load, or else the array grows
+  	this.setState({
+  		locations: locations,
+  		markers: []
+  	});
   }
 
   render() {
@@ -126,6 +152,7 @@ class App extends Component {
 				<LocationsList
 					locations = {this.state.locations}
 					locationLinkClicked = {this.locationLinkClicked}
+					filterLocations = {this.filterLocations}
 				/>
 				<section id="map">
 					Loading map...
