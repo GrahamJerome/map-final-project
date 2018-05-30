@@ -3,11 +3,7 @@
   font-family: 'Helvetica', 'Arial', sans-serif !important;
 }
 
-html, body, #root, #root > div,  #app { height: 100%; margin: 0; padding: 0; }
-
-body {
-  font-size: 14px;
-}
+html, body, #root, #root > div,  #app, #locations { height: 100%; margin: 0; padding: 0; }
 
 article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, #app
 {
@@ -18,44 +14,3 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 div[role="tooltip"] {
   display: none;
 }
-
-#app {
-  flex-direction: row;
-}
-
-aside#locations {
-  width: 30%;
-  flex-direction: column;
-  background-color: black;
-}
-
-#locations input.filter {
-  width: 100%;
-  padding: 6px 8px;
-  border: none;
-  border-bottom: 4px solid gray;
-  font-size: 1em;
-  color: gray;
-}
-
-ul.locations-holder {
-  padding-left: 0;
-}
-
-ul.locations-holder li {
-  padding: 6px 8px;
-}
-
-ul.locations-holder li {
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-section#map {
-  width: 70%;
-  background-color: gray;
-}
-
-
-

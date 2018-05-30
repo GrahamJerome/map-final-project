@@ -1,0 +1,141 @@
+/* Extra-small devices (phones, 575px and down) */
+@media screen and (min-width: 375px) {
+	/* GENERAL */
+
+	body {
+	  font-size: 14px;
+	}
+
+	#app {
+	  flex-direction: row;
+	}
+
+	/* ASIDE */
+
+	.menu-icon-holder {
+		width: 30px;
+		height: 30px;
+
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		position: absolute;
+		z-index: 999;
+		top: 8px;
+		right: 50px;
+
+		border-radius: 50%;
+		background-color: white;
+
+		text-align: center;
+	}
+
+	.menu-icon-holder .bar1, .menu-icon-holder .bar2, .menu-icon-holder .bar3 {
+	    width: 14px;
+	    height: 2px;
+	    background-color: #777;
+	    margin: 2px 0;
+	    transition: 0.4s;
+	}
+
+	/* animate the nav toggle */
+
+	.menu-icon-holder.clicked .bar1 {
+	    -webkit-transform: rotate(-45deg) translate(-4px, 4px) ;
+	    transform: rotate(-45deg) translate(-4px, 4px) ;
+	}
+
+	.menu-icon-holder.clicked .bar2 {
+	    opacity: 0;
+	}
+
+	.menu-icon-holder.clicked .bar3 {
+	    -webkit-transform: rotate(45deg) translate(-4px, -5px) ;
+	    transform: rotate(45deg) translate(-4px, -5px) ;
+	}
+
+	#locations {
+		width: 220px;
+		padding: 5px;
+	  position: absolute;
+	  z-index: 999;
+
+	  flex-direction: column;
+	  background-color: black;
+
+	  -webkit-transform: translate(-200	px, 0);
+	  transform: translate(-220px, 0);
+	  transition: transform 0.3s ease;
+	}
+
+	#locations.open {
+		-webkit-transform: translate(0, 0);
+		transform: translate(0, 0);
+	}
+
+	#locations input.filter {
+	  width: 100%;
+	  padding: 8px 10px;
+	  border: none;
+	  border-bottom: 4px solid gray;
+	  font-size: 1em;
+	  color: gray;
+	}
+
+	ul.locations-holder {
+	  padding-left: 0;
+	}
+
+	ul.locations-holder li {
+	  padding: 6px 8px;
+	}
+
+	ul.locations-holder li {
+	  color: white;
+	  text-decoration: none;
+	  cursor: pointer;
+	}
+
+	/* MAP */
+
+	section#map {
+	  width: 100%;
+	  background-color: gray;
+	}
+
+	.infoWindow h2 img {
+		width: 23px;
+		height: 23px;
+
+		vertical-align: middle;
+	}
+	.infoWindow h2 {
+		color: #CC5949;
+	}
+
+	.infoWindow strong {
+		color: #6398E6;
+	}
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media screen and (min-width: 576px) {
+
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media screen and (min-width: 768px) {
+
+}
+
+/* Large devices (desktops, 992px and up) */
+@media screen and (min-width: 992px) {
+
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media screen and (min-width: 1200px) {
+
+}
