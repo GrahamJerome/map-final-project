@@ -28,26 +28,21 @@ class App extends Component {
 	componentDidMount() {
 		const { locations, foursquare } = this.state;
 		const pingFs = locations.map((location) => {
-			// foursquare.venues.getVenues({
-			// 	"ll": `${location.position.lat}, ${location.position.lng}`,
-			// 	"query": location.title
-			// }).then(res => {
-			// 		Object.assign(location, res.response.venues[0], { success: true });
-			// }).catch(err => {
-			// 	// this can easily be triggered by calling more than 950 times
-			// 	console.log(err);
-			// });
+			foursquare.venues.getVenues({
+				"ll": `${location.position.lat}, ${location.position.lng}`,
+				"query": location.title
+			}).then(res => {
+					Object.assign(location, res.response.venues[0], { success: true });
+			}).catch(err => {
+				// this can easily be triggered by calling more than 950 times
+				console.log(err);
+			});
 		});
 
-		this.initMap();
+		this.initState();
 	}
 
-	componentDidUpdate() {
-		this.updateMarkers();
-		this.updateMap();
-	}
-
-	initMap() {
+	initState() {
 		if (!this.props || !this.props.google) return;
 
 		const { google } = this.props;
@@ -63,53 +58,12 @@ class App extends Component {
 		});
 	}
 
-	updateMarkers() {
-		const { google } = this.props;
-		const { map, locations, markers } = this.state;
-
-		locations.forEach((location, i) => {
-			// this automatically adds the marker to the map object
-			if (location.show) {
-				let marker = new google.maps.Marker({
-					map: map,
-					position: location.position,
-					title: location.title,
-					animation: google.maps.Animation.DROP,
-				  id: i,
-				  // showInfowWindow: false,
-				  fSquareInfo: location // modify this
-				});
-
-				// create an onclick event to open an infowindow at each marker.
-				marker.addListener('click', () => {
-					// marker.showInfoWindow = true;
-				  this.populateInfoWindow(marker);
-				});
-
-				// push the marker to our array of markers.
-				markers.push(marker);
-			}
-		});
-	}
-
-	updateMap() {
-		const { google } = this.props;
-		const { map, markers, locations } = this.state;
-
-		// redraw the bounds
-		const bounds = new google.maps.LatLngBounds();
-
-		locations.forEach((location) => {
-			if (location.show) {
-				bounds.extend(location.position);
-			}
-		});
-
-		map.fitBounds(bounds);
-	}
-
-	// render the marker info window
-	populateInfoWindow(marker) {
+	/*
+	* populateInfoWindow resides in App.js because both siblings can trigger it.
+	* Having it inside MapView may sound cleaner, but it requires a bunch of
+	* states to be set on each marker to verify their interactions. Why suffer?
+	*/
+	populateInfoWindow = (marker) => {
 		const { google } = this.props;
 		const { map, mapInfoWindow, markers } = this.state;
 
@@ -121,8 +75,10 @@ class App extends Component {
 
     // check to make sure the mapInfoWindow is not already opened on this marker.
     if (mapInfoWindow.marker !== marker) {
-
-    	this.resetMarkersAnimation();
+			// reset marker animations
+			markers.forEach((marker) => {
+	  		marker.setAnimation(null);
+	  	});
 
     	// set marker, and toggle bounce animation
 	    mapInfoWindow.marker = marker;
@@ -132,15 +88,13 @@ class App extends Component {
 	    const latLng = marker.getPosition();
 	    map.setCenter(latLng);
 
-	    // populate the marker content
-	    let markerContent;
-
 	    /*
 	    * This part renders the info window content in two ways:
 	    *	1. if the foursquare API returned information we display it
 	    * 2. if not, we display the basic preset information we used in
 	    *	our query to foursquare in the first place.
 	    */
+	    let markerContent;
 
 	    if (marker.fSquareInfo.success) {
 	    	// foursqaure API success
@@ -177,15 +131,6 @@ class App extends Component {
 	    	}
 	    });
   	}
-  }
-
-  // remove marker animations
-  resetMarkersAnimation() {
-  	const { markers } = this.state;
-
-  	markers.forEach((marker) => {
-  		marker.setAnimation(null);
-  	});
   }
 
   // this must be an arrow function to make sure this is App.js scope
@@ -233,7 +178,14 @@ class App extends Component {
 					filterLocations = {this.filterLocations}
 				/>
 
-				<MapView />
+				<MapView
+					google = {this.props.google}
+					map = {this.state.map}
+					mapInfoWindow = {this.state.mapInfoWindow}
+					markers = {this.state.markers}
+					locations = {this.state.locations}
+					populateInfoWindow = {this.populateInfoWindow}
+				/>
 		  </div>
 		);
   }
