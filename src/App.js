@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import { GoogleApiWrapper } from 'google-maps-react';
 import NavToggle from './NavToggle';
 import LocationsList from './LocationsList';
+import MapView from './MapView';
 import fsLogo from './images/foursquare-logo.jpg';
 import './css/App.css';
 import './css/responsive.css';
 
 class App extends Component {
 	state = {
+		map: {},
+		mapInfoWindow: {},
 		markers: [],
 		locations: [
 			{ title: "Freshii", position: { lat: 45.353835, lng: -75.931967 }, show: true },
@@ -25,94 +28,109 @@ class App extends Component {
 	componentDidMount() {
 		const { locations, foursquare } = this.state;
 		const pingFs = locations.map((location) => {
-			foursquare.venues.getVenues({
-				"ll": `${location.position.lat}, ${location.position.lng}`,
-				"query": location.title
-			}).then(res => {
-					Object.assign(location, res.response.venues[0], { success: true });
-			}).catch(err => {
-				// this can easily be triggered by calling more than 950 times
-				console.log(err);
-			});
+			// foursquare.venues.getVenues({
+			// 	"ll": `${location.position.lat}, ${location.position.lng}`,
+			// 	"query": location.title
+			// }).then(res => {
+			// 		Object.assign(location, res.response.venues[0], { success: true });
+			// }).catch(err => {
+			// 	// this can easily be triggered by calling more than 950 times
+			// 	console.log(err);
+			// });
 		});
 
-		this.loadMap();
+		this.initMap();
 	}
 
 	componentDidUpdate() {
-		this.loadMap();
+		this.updateMarkers();
+		this.updateMap();
 	}
 
-	// setup and render the map
-	loadMap() {
+	initMap() {
 		if (!this.props || !this.props.google) return;
 
-		/* initialize the map */
-
 		const { google } = this.props;
-		const { locations, markers } = this.state;
-		const mapNode   = document.getElementById('map');
-		const mapConfig = Object.assign({}, {
-			zoom     : 13,
-			center   : { lat: 45.3544903, lng: -75.9245926 },
-			mapTypeId: 'roadmap'
+		const mapNode = document.getElementById('map');
+		const map = new google.maps.Map(mapNode, {
+			center: { lat: 45.3544903, lng: -75.9245926 },
 		});
-		const bounds = new google.maps.LatLngBounds();
+		const mapInfoWindow = new google.maps.InfoWindow();
 
-		this.map = new google.maps.Map(mapNode, mapConfig);
-		this.mapInfoWindow = new google.maps.InfoWindow();
+		this.setState({
+			map: map,
+			mapInfoWindow: mapInfoWindow
+		});
+	}
 
-		/* setup map markers */
+	updateMarkers() {
+		const { google } = this.props;
+		const { map, locations, markers } = this.state;
 
 		locations.forEach((location, i) => {
-			// console.log(location);
+			// this automatically adds the marker to the map object
 			if (location.show) {
-				// this automatically adds the marker to the map object
 				let marker = new google.maps.Marker({
-					map      : this.map,
-					position : location.position,
-					title    : location.title,
+					map: map,
+					position: location.position,
+					title: location.title,
 					animation: google.maps.Animation.DROP,
 				  id: i,
-				  fSquareInfo: location
+				  // showInfowWindow: false,
+				  fSquareInfo: location // modify this
 				});
 
 				// create an onclick event to open an infowindow at each marker.
 				marker.addListener('click', () => {
+					// marker.showInfoWindow = true;
 				  this.populateInfoWindow(marker);
 				});
-
-				bounds.extend(location.position);
 
 				// push the marker to our array of markers.
 				markers.push(marker);
 			}
 		});
+	}
 
-		// adjust map view to fit all markers
-		this.map.fitBounds(bounds);
+	updateMap() {
+		const { google } = this.props;
+		const { map, markers, locations } = this.state;
+
+		// redraw the bounds
+		const bounds = new google.maps.LatLngBounds();
+
+		locations.forEach((location) => {
+			if (location.show) {
+				bounds.extend(location.position);
+			}
+		});
+
+		map.fitBounds(bounds);
 	}
 
 	// render the marker info window
-	populateInfoWindow = (marker) => {
-
+	populateInfoWindow(marker) {
 		const { google } = this.props;
+		const { map, mapInfoWindow, markers } = this.state;
 
 		// close nav if it's open
 		this.closeNav();
 
-    // check to make sure the mapInfoWindow is not already opened on this marker.
-    if (this.mapInfoWindow.marker !== marker) {
+		// console.log('markers: ', markers);
+		// console.log('matched marker: ', marker);
 
-    	this.resetMarkers();
+    // check to make sure the mapInfoWindow is not already opened on this marker.
+    if (mapInfoWindow.marker !== marker) {
+
+    	this.resetMarkersAnimation();
 
     	// set marker, and toggle bounce animation
-	    this.mapInfoWindow.marker = marker;
-	    this.mapInfoWindow.marker.setAnimation(google.maps.Animation.BOUNCE);
+	    mapInfoWindow.marker = marker;
+	    mapInfoWindow.marker.setAnimation(google.maps.Animation.BOUNCE);
 
 	    // recenter map based on marker that's clicked
 	    const latLng = marker.getPosition();
-	    this.map.setCenter(latLng);
+	    map.setCenter(latLng);
 
 	    // populate the marker content
 	    let markerContent;
@@ -148,20 +166,21 @@ class App extends Component {
 	    }
 
 	    // set the marker content, and open it
-	    this.mapInfoWindow.setContent(markerContent);
-	    this.mapInfoWindow.open(this.map, marker);
+	    mapInfoWindow.setContent(markerContent);
+	    mapInfoWindow.open(map, marker);
 
 	    // make sure the marker property is cleared if the mapInfoWindow is closed.
-	    this.mapInfoWindow.addListener('closeclick', () => {
-	    	if (this.mapInfoWindow.marker) {
-    			this.mapInfoWindow.marker.setAnimation(null);
-    		  this.mapInfoWindow.marker = null;
+	    mapInfoWindow.addListener('closeclick', () => {
+	    	if (mapInfoWindow.marker) {
+    			mapInfoWindow.marker.setAnimation(null);
+    		  mapInfoWindow.marker = null;
 	    	}
 	    });
   	}
   }
 
-  resetMarkers() {
+  // remove marker animations
+  resetMarkersAnimation() {
   	const { markers } = this.state;
 
   	markers.forEach((marker) => {
@@ -171,17 +190,19 @@ class App extends Component {
 
   // this must be an arrow function to make sure this is App.js scope
   locationLinkClicked = (location) => {
-  	if (location.show) {
-	  	const { markers } = this.state;
-	  	const marker = markers.filter((marker) => marker.title === location.title);
+  	// console.log('location: ', location);
+  	const { markers } = this.state;
+  	const [ marker ] = markers.filter((marker) => marker.title === location.title);
 
-	  	// return the object, not the array.
-	  	this.populateInfoWindow(marker[0]);
-  	}
+  	this.populateInfoWindow(marker);
   }
 
   // adjust the locations based on filtering
   filterLocations = (locations) => {
+  	this.state.markers.forEach((marker) => {
+			marker.setMap(null);
+		});
+
   	// markers MUST be reset upon every load, or else the array grows
   	this.setState({
   		locations: locations,
@@ -211,9 +232,8 @@ class App extends Component {
 					locationLinkClicked = {this.locationLinkClicked}
 					filterLocations = {this.filterLocations}
 				/>
-				<section id="map">
-					Loading map...
-				</section>
+
+				<MapView />
 		  </div>
 		);
   }

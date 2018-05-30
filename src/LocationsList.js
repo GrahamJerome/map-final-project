@@ -6,40 +6,36 @@ import LocationLink from './LocationLink';
 class LocationsList extends Component {
 
 	state = {
-		query: "",
-		locations: this.props.locations,
+		query: ""
 	}
 
 	updateQuery = (query) => {
-		const { locations } = this.state;
-		let matchedList;
+		const { locations } = this.props;
 
 		// set the list to the new matched filter, or reset to the original
 		if (query) {
 			const match = new RegExp(escapeRegExp(query), 'i');
-			matchedList = locations.map((location) => {
+			const matchedList = locations.map((location) => {
 				location.show = match.test(location.title);
 				return location;
 			});
 
 			this.setState({ query: query.trim() });
-
 			this.props.filterLocations(matchedList);
 		} else {
-			this.setState({
-				query: "",
-				locations: locations.map((location) => {
-					location.show = true;
-					return location;
-				})
+			const resetList = locations.map((location) => {
+				location.show = true;
+				return location;
 			});
 
-			this.props.filterLocations(this.props.locations);
+			this.setState({ query: "" });
+			this.props.filterLocations(resetList);
 		}
 	}
 
 	render() {
-		const { locations, query } = this.state;
+		const { query } = this.state;
+		const { locations } = this.props;
 
 		return (
 			<aside id="locations">
