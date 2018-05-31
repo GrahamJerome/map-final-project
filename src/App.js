@@ -27,17 +27,17 @@ class App extends Component {
 
 	componentDidMount() {
 		const { locations, foursquare } = this.state;
-		const pingFs = locations.map((location) => {
-			foursquare.venues.getVenues({
-				"ll": `${location.position.lat}, ${location.position.lng}`,
-				"query": location.title
-			}).then(res => {
-					Object.assign(location, res.response.venues[0], { success: true });
-			}).catch(err => {
-				// this can easily be triggered by calling more than 950 times
-				console.log(err);
-			});
-		});
+		// const pingFs = locations.map((location) => {
+		// 	foursquare.venues.getVenues({
+		// 		"ll": `${location.position.lat}, ${location.position.lng}`,
+		// 		"query": location.title
+		// 	}).then(res => {
+		// 			Object.assign(location, res.response.venues[0], { success: true });
+		// 	}).catch(err => {
+		// 		// this can easily be triggered by calling more than 950 times
+		// 		console.log(err);
+		// 	});
+		// });
 
 		this.initState();
 	}
