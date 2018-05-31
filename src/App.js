@@ -103,33 +103,40 @@ class App extends Component {
 	    *	our query to foursquare in the first place.
 	    */
 	    let markerContent;
+	    // set tab indexes for all content to increase accessibility
+	    let tabIndex = 99;
 
 	    if (marker.fSquareInfo.success) {
 	    	// foursqaure API success
 	    	markerContent =
-	    	`<div class="infoWindow">` +
-	    		`<h2><img src="${marker.fSquareInfo.categories[0].icon.prefix+'bg_32'+marker.fSquareInfo.categories[0].icon.suffix}" alt="restaurant category"> ${marker.fSquareInfo.name}</h2>` +
-	    		`<h4>${marker.fSquareInfo.categories[0].name}, <strong>${marker.fSquareInfo.hereNow.summary}</strong></h4>` +
-	    		`<p>checkins: <strong>${marker.fSquareInfo.stats.checkinsCount}</strong> tips: <strong>${marker.fSquareInfo.stats.tipCount}</strong> visits: <strong>${marker.fSquareInfo.stats.visitsCount}</strong></p>` +
-	    		`<div class="address">` +
+	    	`<div class="infoWindow" id="miw" tabIndex=${++tabIndex}>` +
+	    		`<h2 tabIndex=${++tabIndex}><img src="${marker.fSquareInfo.categories[0].icon.prefix+'bg_32'+marker.fSquareInfo.categories[0].icon.suffix}" alt="restaurant category"> ${marker.fSquareInfo.name}</h2>` +
+	    		`<h4 tabIndex=${++tabIndex}>${marker.fSquareInfo.categories[0].name}, <strong>${marker.fSquareInfo.hereNow.summary}</strong></h4>` +
+	    		`<p tabIndex=${++tabIndex}>checkins: <strong>${marker.fSquareInfo.stats.checkinsCount}</strong> tips: <strong>${marker.fSquareInfo.stats.tipCount}</strong> visits: <strong>${marker.fSquareInfo.stats.visitsCount}</strong></p>` +
+	    		`<div class="address" tabIndex=${++tabIndex}>` +
 	    			`<p>${marker.fSquareInfo.location.formattedAddress[0]}</p>` +
 	    			`<p>${marker.fSquareInfo.location.formattedAddress[1]}</p>` +
 	    		`</div>` +
-	    		`<img src=${fsLogo} alt="four square logo" />` +
+	    		`<img src=${fsLogo} tabIndex=${++tabIndex} alt="four square logo" />` +
 	    	`</div>`;
 	    } else {
 	    	// foursqaure API failure
 	    	markerContent =
-	    	`<div class="infoWindow">` +
-	    		`<h2>${marker.title}</h2>` +
-	    		`<p>Foursquare API unavailable</p>` +
-	    		`<img src=${fsLogo} alt="four square logo" />` +
+	    	`<div class="infoWindow" tabIndex=${++tabIndex}>` +
+	    		`<h2 tabIndex=${++tabIndex}>${marker.title}</h2>` +
+	    		`<p tabIndex=${++tabIndex}>Foursquare API unavailable</p>` +
+	    		`<img src=${fsLogo} tabIndex=${++tabIndex} alt="four square logo" />` +
 	    	`</div>`;
 	    }
 
 	    // set the marker content, and open it
 	    mapInfoWindow.setContent(markerContent);
 	    mapInfoWindow.open(map, marker);
+
+	    // set the focus to the current selected marker
+	    google.maps.event.addListener(mapInfoWindow, 'domready', function() {
+	      document.querySelector('#miw').focus();
+	    });
 
 	    // make sure the marker property is cleared if the mapInfoWindow is closed.
 	    mapInfoWindow.addListener('closeclick', () => {

@@ -50,7 +50,7 @@ class MapView extends Component {
 
 	render() {
 		return (
-			<section id="map">
+			<section id="map" tabIndex="-1" role="application">
 				Loading map...
 			</section>
 		);

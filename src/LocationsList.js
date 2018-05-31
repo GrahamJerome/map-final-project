@@ -45,15 +45,20 @@ class LocationsList extends Component {
 					placeholder = "Filter ..."
 					value = {query}
 					onChange = {(event) => this.updateQuery(event.target.value)}
+					aria-describedby="nav-filter-tip"
+					role="search"
+					tabIndex="2"
 				/>
+				<div role="tooltip" id="nav-filter-tip">Input text to filter the list results</div>
 
-				<ul className="locations-holder">
+				<ul className="locations-holder" role="list">
 				{
 					locations.map((location, i) => {
 						if (location.show) {
 							return (
 								<LocationLink
 									key = {i}
+									tabIndex = {i + 3}
 									location = {location}
 									locationLinkClicked = {this.props.locationLinkClicked}
 								/>

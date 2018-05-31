@@ -14,3 +14,7 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 div[role="tooltip"] {
   display: none;
 }
+
+#miw:focus {
+	outline: none;
+}

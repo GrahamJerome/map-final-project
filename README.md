@@ -22,6 +22,14 @@ Once installed, run `npm install && npm start`
 
 The server will automatically load the project in your default browser at `http://localhost:3000`
 
+To run the production build, do the following:
+
+1. `yarn build`
+2. `yarn global add serve`
+3. `serve -s build`
+
+*NOTE:* There is an issue with the server and the service worker where it redirects index.html with a 301. This creates conflicts with caching index.html. To fix this, open `service-worker.js` and modify `/index.html` to `/`.
+
 ### Instructions
 The index page will show a full screen map with markers. There are multiple ways to interact with the markers:
 
@@ -33,7 +41,7 @@ The application will populate the restaurant locations with information from the
 
 ### Dependancies
 
-Aside from the node_module packages listed in package.json, this application interacts with Foursquares API. You can see details on the react foursquare package here: `https://github.com/foursquare/react-foursquare.git`
+The foursquare API was used for this project. For more information on how to use their API visit: `https://developer.foursquare.com/`.
 
 Another dependancy worth noting is escape-string-regexp `https://www.npmjs.com/package/escape-string-regexp` used to sort the filtered results in the navigation menu.
 
