@@ -18,26 +18,34 @@ class App extends Component {
 			{ title: "Willy's Pizza", position: { lat: 45.3541745, lng: -75.9354016 }, show: true },
 			{ title: "Starbucks", position: { lat: 45.3582155, lng: -75.9368827 }, show: true },
 			{ title: "McDonald's", position: { lat: 45.3587677, lng: -75.9386384 }, show: true }
-		],
-		foursquare: require('react-foursquare')({
-		  clientID: '4UXJZBCVXFLJUVGLKEX1VQVMCEFJDKJKYYASDHJEHH0WOK4I',
-		  clientSecret: 'BATMM0DKAH2ILJVRPXUWZ2WTSXLOU2V1V1S2P245AQ1DRBJI'
-		})
+		]
 	}
 
 	componentDidMount() {
-		const { locations, foursquare } = this.state;
-		// const pingFs = locations.map((location) => {
-		// 	foursquare.venues.getVenues({
-		// 		"ll": `${location.position.lat}, ${location.position.lng}`,
-		// 		"query": location.title
-		// 	}).then(res => {
-		// 			Object.assign(location, res.response.venues[0], { success: true });
-		// 	}).catch(err => {
-		// 		// this can easily be triggered by calling more than 950 times
-		// 		console.log(err);
-		// 	});
-		// });
+		const { locations } = this.state;
+		const pingFs = locations.map((location) => {
+			const querystring = require('querystring');
+			const credentials = {
+			  client_id: '4UXJZBCVXFLJUVGLKEX1VQVMCEFJDKJKYYASDHJEHH0WOK4I',
+			  client_secret: 'BATMM0DKAH2ILJVRPXUWZ2WTSXLOU2V1V1S2P245AQ1DRBJI'
+			}
+			const version = 'v=20171001';
+			const params = {
+				"ll": `${location.position.lat}, ${location.position.lng}`,
+				"query": location.title
+			}
+			const urlString = 'https://api.foursquare.com/v2/venues/search?' +
+        querystring.stringify(params) + '&' + version + '&' +
+        querystring.stringify(credentials);
+			fetch(urlString)
+				.then( response => response.json())
+				.then( res => {
+					Object.assign(location, res.response.venues[0], { success: true });
+				})
+				.catch( error => {
+					console.log(error);
+				});
+			});
 
 		this.initState();
 	}
