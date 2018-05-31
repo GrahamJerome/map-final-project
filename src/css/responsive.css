@@ -75,6 +75,10 @@
 		transform: translate(0, 0);
 	}
 
+	#locations h3 {
+		color: #CCC;
+	}
+
 	#locations input.filter {
 	  width: 100%;
 	  padding: 8px 10px;

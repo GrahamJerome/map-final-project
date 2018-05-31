@@ -39,6 +39,7 @@ class LocationsList extends Component {
 
 		return (
 			<aside id="locations">
+				<h3>Restaurant List:</h3>
 				<input
 					type = "text"
 					className = "filter"

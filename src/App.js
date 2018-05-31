@@ -177,7 +177,11 @@ class App extends Component {
 
   toggleNav() {
   	document.querySelector('.menu-icon-holder').classList.toggle('clicked');
-  	document.getElementById('locations').classList.toggle('open');
+
+  	const locationsNav = document.getElementById('locations');
+  	locationsNav.classList.toggle('open');
+  	// set focus on nav now that it's open
+  	locationsNav.focus();
   }
 
   render() {
