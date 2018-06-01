@@ -122,7 +122,7 @@ class App extends Component {
 	    } else {
 	    	// foursqaure API failure
 	    	markerContent =
-	    	`<div class="infoWindow" tabIndex=${++tabIndex}>` +
+	    	`<div class="infoWindow" id="miw" tabIndex=${++tabIndex}>` +
 	    		`<h2 tabIndex=${++tabIndex}>${marker.title}</h2>` +
 	    		`<p tabIndex=${++tabIndex}>Foursquare API unavailable</p>` +
 	    		`<img src=${fsLogo} tabIndex=${++tabIndex} alt="four square logo" />` +
