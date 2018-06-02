@@ -23,7 +23,9 @@ class App extends Component {
 
 	componentDidMount() {
 		const { locations } = this.state;
-		const pingFs = locations.map((location) => {
+
+		// grab foursquare data
+		locations.map((location) => {
 			const querystring = require('querystring');
 			const credentials = {
 			  client_id: '4UXJZBCVXFLJUVGLKEX1VQVMCEFJDKJKYYASDHJEHH0WOK4I',
@@ -150,7 +152,6 @@ class App extends Component {
 
   // this must be an arrow function to make sure this is App.js scope
   locationLinkClicked = (location) => {
-  	// console.log('location: ', location);
   	const { markers } = this.state;
   	const [ marker ] = markers.filter((marker) => marker.title === location.title);
 
@@ -210,8 +211,4 @@ class App extends Component {
   }
 }
 
-// wrap the app in the GoogleAPI so child components can access it
-export default GoogleApiWrapper({
-	apiKey: 'AIzaSyAF0n-RhX9L8GW6VGO6T-wcPpzyOy3zHRg',
-	libraries: ['visualization']
-})(App);
+export default App;

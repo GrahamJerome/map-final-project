@@ -16,5 +16,31 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+
+    <!--
+      These two modals are in index.html because gm_authFailure() needs direct access to them at time of the request.
+    -->
+    <div id="map-auth-error" class="error-modal" style="display: none;">
+      <h1>Google Maps Authorization Error:</h1>
+      <h3>Please check that the API key has been entered correctly, and is authorized for this application.</h3>
+    </div>
+
+    <div id="map-load-error" class="error-modal" style="display: none;">
+      <h1>Google Maps Load Error:</h1>
+      <h3>The Google Maps API could not be loaded. Please check your internet connection, and the URL requested.</h3>
+    </div>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAF0n-RhX9L8GW6VGO6T-wcPpzyOy3zHRg" onerror="googleError();">
+   </script>
+
+   <script>
+      function gm_authFailure() {
+        document.getElementById('map-auth-error').style.display = 'flex';
+      }
+
+      function googleError() {
+        document.getElementById('map-load-error').style.display = 'flex';
+      }
+   </script>
   </body>
 </html>

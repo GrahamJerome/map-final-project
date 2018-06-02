@@ -3,3 +3,17 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.error-modal {
+	position: absolute;
+	width: 80%;
+	height: auto;
+	padding: 20px;
+	top: 10%;
+	left: 10%;
+	/* display: flex; */
+	flex-direction: column;
+	justify-content: space-evenly;
+	background-color: rgba(255, 255, 255, 0.95);
+	text-align: center;
+}

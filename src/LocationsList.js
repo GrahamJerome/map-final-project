@@ -52,7 +52,7 @@ class LocationsList extends Component {
 				/>
 				<div role="tooltip" id="nav-filter-tip">Input text to filter the list results</div>
 
-				<ul className="locations-holder" role="list">
+				<ul className="locations-holder">
 				{
 					locations.map((location, i) => {
 						if (location.show) {
